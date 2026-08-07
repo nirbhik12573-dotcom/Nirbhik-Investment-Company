@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}
+Employees
+{% endblock title %}
+
+{% block content %}
+
+<section class="rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+
+    <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-sky-600">
+                Employee Records
+            </p>
+
+            <h1 class="mt-2 text-3xl font-bold text-slate-900">
+                Company Employees
+            </h1>
+        </div>
+
+        {% if request.user.is_superuser %}
+            <a
+                href="{% url 'add-student' %}"
+                class="rounded-lg bg-sky-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-sky-700"
+            >
+                Add Employee
+            </a>
+        {% endif %}
+
+    </div>
+
+    <div class="overflow-x-auto rounded-3xl border border-slate-200">
+
+        <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+
+            <thead class="bg-slate-50">
+                <tr>
+                    <th class="px-6 py-4 font-medium uppercase text-slate-500">
+                        Name
+                    </th>
+
+                    <th class="px-6 py-4 font-medium uppercase text-slate-500">
+                        Address
+                    </th>
+
+                    <th class="px-6 py-4 font-medium uppercase text-slate-500">
+                        Age
+                    </th>
+
+                    <th class="px-6 py-4 font-medium uppercase text-slate-500">
+                        Email
+                    </th>
+
+                    <th class="px-6 py-4 font-medium uppercase text-slate-500">
+                        Department
+                    </th>
+
+                    <th class="px-6 py-4 font-medium uppercase text-slate-500">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-200 bg-white">
+
+                {% for student in page_obj %}
+
+                    <tr class="transition hover:bg-slate-50">
+
+                        <td class="px-6 py-4 font-medium text-slate-900">
+                            {{ student.name }}
+                        </td>
+
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ student.address }}
+                        </td>
+
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ student.age }}
+                        </td>
+
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ student.email }}
+                        </td>
+
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ student.department.name }}
+                        </td>
+
+                        <td class="px-6 py-4">
+
+                            {% if request.user.is_superuser %}
+
+                                <a
+                                    href="{% url 'update-student' student.id %}"
+                                    class="mr-3 font-medium text-sky-600 hover:text-sky-800"
+                                >
+                                    Update
+                                </a>
+
+                                <a
+                                    href="{% url 'delete-student' student.id %}"
+                                    class="font-medium text-red-600 hover:text-red-800"
+                                >
+                                    Delete
+                                </a>
+
+                            {% else %}
+
+                                <span class="text-sm text-slate-400">
+                                    Admin only
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="6"
+                            class="px-6 py-8 text-center text-slate-500"
+                        >
+                            No employees found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center gap-5 text-sm">
+
+        {% if page_obj.has_previous %}
+            <a
+                href="?page={{ page_obj.previous_page_number }}"
+                class="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300"
+            >
+                Previous
+            </a>
+        {% endif %}
+
+        <span class="text-slate-600">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a
+                href="?page={{ page_obj.next_page_number }}"
+                class="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300"
+            >
+                Next
+            </a>
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock content %}

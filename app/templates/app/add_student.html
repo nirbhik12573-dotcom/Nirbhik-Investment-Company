@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Employee
+{% endblock title %}
+
+{% block content %}
+
+<div class="mx-auto max-w-2xl">
+
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+
+        <h1 class="mb-2 text-2xl font-semibold text-slate-900">
+            Add Employee
+        </h1>
+
+        <p class="mb-6 text-sm text-slate-600">
+            Fill in the employee details below.
+        </p>
+
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button
+                type="submit"
+                class="rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
+            >
+                Save Employee
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock content %}

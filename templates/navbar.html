@@ -1,0 +1,94 @@
+<nav class="bg-slate-900 text-white shadow-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+
+        <!-- Company Name -->
+        <a
+            href="{% url 'home' %}"
+            class="text-xl font-semibold tracking-tight text-slate-100 hover:text-white"
+        >
+            Nirbhik Investment Company
+        </a>
+
+        <!-- Navigation Links -->
+        <div class="flex items-center space-x-2">
+
+            <!-- Home -->
+            <a
+                href="{% url 'home' %}"
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+            >
+                Home
+            </a>
+
+            <!-- Services -->
+            <a
+                href="{% url 'home' %}#services"
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+            >
+                Services
+            </a>
+
+            <!-- Employees -->
+            <a
+                href="{% url 'employee' %}"
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+            >
+                Employees
+            </a>
+
+            <!-- About -->
+            <a
+                href="{% url 'about' %}"
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+            >
+                About
+            </a>
+
+            <!-- Contact -->
+            <a
+                href="{% url 'contact' %}"
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+            >
+                Contact
+            </a>
+
+            <!-- Register Account -->
+            {% if not request.user.is_superuser %}
+                <a
+                    href="{% url 'register' %}"
+                    class="rounded-md border border-sky-400 px-3 py-2 text-sm font-medium text-sky-300 transition hover:bg-sky-600 hover:text-white"
+                >
+                    Register Account
+                </a>
+            {% endif %}
+
+            {% if request.user.is_authenticated %}
+
+                <!-- Logged-in username -->
+                <span class="rounded-md px-3 py-2 text-sm font-medium text-sky-400">
+                    {{ request.user.username }}
+                </span>
+
+                <!-- Logout -->
+                <a
+                    href="{% url 'logout' %}"
+                    class="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                >
+                    Logout
+                </a>
+
+            {% else %}
+
+                <!-- Login -->
+                <a
+                    href="{% url 'login' %}"
+                    class="rounded-md bg-sky-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-sky-700"
+                >
+                    Login
+                </a>
+
+            {% endif %}
+
+        </div>
+    </div>
+</nav>
