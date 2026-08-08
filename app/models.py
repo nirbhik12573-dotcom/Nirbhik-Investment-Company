@@ -1,18 +1,3 @@
-"""
-Model Fields:
-    CharField()
-    TextField()
-    IntegerField()
-    FloatField()
-    DecimalField()
-    TimeField()
-    DateField()
-    EmailField()
-    URLField()
-    ImageField()
-    FileField()
-    ForeignKey()
-"""    
 from django.db import models
 
 
