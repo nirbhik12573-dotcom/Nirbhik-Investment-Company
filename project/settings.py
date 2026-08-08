@@ -127,23 +127,21 @@ STATICFILES_STORAGE = (
 )
 LOGIN_URL="login"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+BREVO_SENDER_EMAIL = os.environ.get(
+    "BREVO_SENDER_EMAIL",
+    "nirbhikthapa3@gmail.com",
+)
 
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = os.environ.get(
-    "DEFAULT_FROM_EMAIL",
-    EMAIL_HOST_USER,
+BREVO_SENDER_NAME = os.environ.get(
+    "BREVO_SENDER_NAME",
+    "Nirbhik Investment Company",
 )
 
 CONTACT_EMAIL = os.environ.get(
     "CONTACT_EMAIL",
-    EMAIL_HOST_USER,
+    "nirbhikthapa3@gmail.com",
 )
 
-EMAIL_TIMEOUT = 30
+DEFAULT_FROM_EMAIL = BREVO_SENDER_EMAIL

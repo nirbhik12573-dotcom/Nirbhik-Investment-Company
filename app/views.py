@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.conf import settings
-from django.core.mail import EmailMessage
+import requests
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Student
@@ -254,42 +254,66 @@ Preferred appointment time:
 Message:
 {message_text}
 """
+try:
+    if not settings.BREVO_API_KEY:
+        raise ValueError("BREVO_API_KEY is missing.")
 
-            try:
-                email_message = EmailMessage(
-                    subject=subject,
-                    body=email_body,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    to=[settings.CONTACT_EMAIL],
-                    reply_to=[email],
-                )
+    brevo_url = "https://api.brevo.com/v3/smtp/email"
 
-                email_message.send(
-                    fail_silently=False
-                )
+    brevo_headers = {
+        "accept": "application/json",
+        "api-key": settings.BREVO_API_KEY,
+        "content-type": "application/json",
+    }
 
-                messages.success(
-                    request,
-                    "Your message was sent successfully."
-                )
+    brevo_data = {
+        "sender": {
+            "name": settings.BREVO_SENDER_NAME,
+            "email": settings.BREVO_SENDER_EMAIL,
+        },
+        "to": [
+            {
+                "email": settings.CONTACT_EMAIL,
+            }
+        ],
+        "replyTo": {
+            "email": email,
+            "name": name,
+        },
+        "subject": subject,
+        "textContent": email_body,
+    }
 
-                return redirect("message-success")
+    response = requests.post(
+        brevo_url,
+        headers=brevo_headers,
+        json=brevo_data,
+        timeout=30,
+    )
 
-            except Exception as error:
-                print("EMAIL ERROR:", repr(error))
+    response.raise_for_status()
 
-                messages.error(
-                    request,
-                    f"Email error: {error}"
-                )
-
-    else:
-        form = MessageForm()
-
-    return render(
+    messages.success(
         request,
-        "app/message_us.html",
-        {"form": form}
+        "Your message was sent successfully.",
+    )
+
+    return redirect("message-success")
+
+except requests.RequestException as error:
+    print("BREVO API ERROR:", repr(error))
+
+    messages.error(
+        request,
+        "The message could not be sent. Please try again later.",
+    )
+
+except Exception as error:
+    print("EMAIL ERROR:", repr(error))
+
+    messages.error(
+        request,
+        "An unexpected email error occurred.",
     )
 def message_success(request):
     return render(
