@@ -30,23 +30,25 @@ def register_user(request):
         form = CustomUserCreationForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            user = form.save()
 
             messages.success(
                 request,
-                "Your account was created successfully."
+                f"Account created successfully for {user.username}.",
             )
 
             return redirect("login")
+
     else:
         form = CustomUserCreationForm()
 
     return render(
         request,
         "app/register.html",
-        {"form": form}
+        {
+            "form": form,
+        },
     )
-
 
 def login_user(request):
     next_url = request.GET.get("next") or request.POST.get("next")

@@ -1,16 +1,31 @@
 from django import forms
-from .models import Department,Student
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from .models import Department, Student
+
+
 class CustomUserCreationForm(UserCreationForm):
-    email=forms.EmailField()
-    first_name=forms.CharField(max_length=100)
-    last_name=forms.CharField(max_length=100)
+    email = forms.EmailField(
+        required=True,
+        label="Email address",
+    )
+
+    first_name = forms.CharField(
+        required=True,
+        max_length=100,
+        label="First name",
+    )
+
+    last_name = forms.CharField(
+        required=True,
+        max_length=100,
+        label="Last name",
+    )
 
     class Meta:
-        model=User
-        fields=[
+        model = User
+        fields = [
             "username",
             "first_name",
             "last_name",
@@ -19,36 +34,57 @@ class CustomUserCreationForm(UserCreationForm):
             "password2",
         ]
 
+
 class StudentForm(forms.Form):
-    name=forms.CharField(
+    name = forms.CharField(
+        max_length=100,
         widget=forms.TextInput(
-            attrs={"placeholder":"Enter your name"})
+            attrs={
+                "placeholder": "Enter your name",
+            }
+        ),
     )
-    address=forms.CharField()
-    email=forms.EmailField()
-    age=forms.IntegerField()
-    department= forms.ModelChoiceField(
+
+    address = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter your address",
+            }
+        ),
+    )
+
+    email = forms.EmailField()
+    age = forms.IntegerField()
+
+    department = forms.ModelChoiceField(
         queryset=Department.objects.all()
     )
 
+
 class StudentModelForm(forms.ModelForm):
     class Meta:
-        model=Student
-        fields=["name","address","email","age","department"]
+        model = Student
 
-        widget={
+        fields = [
+            "name",
+            "address",
+            "email",
+            "age",
+            "department",
+        ]
+
+        # It must be "widgets", not "widget".
+        widgets = {
             "name": forms.TextInput(
-               attrs={
-                    "placeholder":"Enter your name",
-                    "class":"w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                attrs={
+                    "placeholder": "Enter your name",
                 }
             ),
-            "address":forms.TextInput(
+            "address": forms.TextInput(
                 attrs={
-                    "placeholder":"Enter your Address",
-                    "class":"w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                    "placeholder": "Enter your address",
                 }
-            )
+            ),
         }
 
 
@@ -56,89 +92,47 @@ class MessageForm(forms.Form):
     name = forms.CharField(
         max_length=100,
         label="Full Name",
-        widget=forms.TextInput(attrs={
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-            "placeholder": "Enter your full name",
-        })
     )
 
     email = forms.EmailField(
         label="Email Address",
-        widget=forms.EmailInput(attrs={
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-            "placeholder": "Enter your email address",
-        })
     )
 
     phone = forms.CharField(
         max_length=20,
         label="Phone Number",
-        widget=forms.TextInput(attrs={
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-            "placeholder": "Enter your phone number",
-        })
     )
 
     advice = forms.CharField(
         max_length=200,
         label="What advice do you need?",
-        widget=forms.TextInput(attrs={
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-            "placeholder": "Example: Investment planning",
-        })
     )
 
     appointment_date = forms.DateField(
         label="Preferred Appointment Date",
-        widget=forms.DateInput(attrs={
-            "type": "date",
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-        })
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+            }
+        ),
     )
 
     appointment_time = forms.TimeField(
         label="Preferred Appointment Time",
-        widget=forms.TimeInput(attrs={
-            "type": "time",
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-        })
+        widget=forms.TimeInput(
+            attrs={
+                "type": "time",
+            }
+        ),
     )
 
     message = forms.CharField(
         label="Message",
-        widget=forms.Textarea(attrs={
-            "rows": 6,
-            "class": (
-                "w-full rounded-xl border border-slate-300 px-4 py-3 "
-                "text-sm outline-none transition "
-                "focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
-            ),
-            "placeholder": "Write your message here...",
-        })
+        widget=forms.Textarea(
+            attrs={
+                "rows": 6,
+            }
+        ),
     )
 
     def clean_appointment_date(self):
