@@ -254,69 +254,82 @@ Preferred appointment time:
 Message:
 {message_text}
 """
-try:
-    if not settings.BREVO_API_KEY:
-        raise ValueError("BREVO_API_KEY is missing.")
 
-    brevo_url = "https://api.brevo.com/v3/smtp/email"
+            try:
+                if not settings.BREVO_API_KEY:
+                    raise ValueError("BREVO_API_KEY is missing.")
 
-    brevo_headers = {
-        "accept": "application/json",
-        "api-key": settings.BREVO_API_KEY,
-        "content-type": "application/json",
-    }
+                brevo_url = "https://api.brevo.com/v3/smtp/email"
 
-    brevo_data = {
-        "sender": {
-            "name": settings.BREVO_SENDER_NAME,
-            "email": settings.BREVO_SENDER_EMAIL,
+                brevo_headers = {
+                    "accept": "application/json",
+                    "api-key": settings.BREVO_API_KEY,
+                    "content-type": "application/json",
+                }
+
+                brevo_data = {
+                    "sender": {
+                        "name": settings.BREVO_SENDER_NAME,
+                        "email": settings.BREVO_SENDER_EMAIL,
+                    },
+                    "to": [
+                        {
+                            "email": settings.CONTACT_EMAIL,
+                        }
+                    ],
+                    "replyTo": {
+                        "email": email,
+                        "name": name,
+                    },
+                    "subject": subject,
+                    "textContent": email_body,
+                }
+
+                response = requests.post(
+                    brevo_url,
+                    headers=brevo_headers,
+                    json=brevo_data,
+                    timeout=30,
+                )
+
+                response.raise_for_status()
+
+                messages.success(
+                    request,
+                    "Your message was sent successfully.",
+                )
+
+                return redirect("message-success")
+
+            except requests.RequestException as error:
+                print("BREVO API ERROR:", repr(error))
+
+                messages.error(
+                    request,
+                    "The message could not be sent. Please try again later.",
+                )
+
+            except Exception as error:
+                print("EMAIL ERROR:", repr(error))
+
+                messages.error(
+                    request,
+                    "An unexpected email error occurred.",
+                )
+
+    else:
+        form = MessageForm()
+
+    return render(
+        request,
+        "app/message_us.html",
+        {
+            "form": form,
         },
-        "to": [
-            {
-                "email": settings.CONTACT_EMAIL,
-            }
-        ],
-        "replyTo": {
-            "email": email,
-            "name": name,
-        },
-        "subject": subject,
-        "textContent": email_body,
-    }
-
-    response = requests.post(
-        brevo_url,
-        headers=brevo_headers,
-        json=brevo_data,
-        timeout=30,
     )
 
-    response.raise_for_status()
-
-    messages.success(
-        request,
-        "Your message was sent successfully.",
-    )
-
-    return redirect("message-success")
-
-except requests.RequestException as error:
-    print("BREVO API ERROR:", repr(error))
-
-    messages.error(
-        request,
-        "The message could not be sent. Please try again later.",
-    )
-
-except Exception as error:
-    print("EMAIL ERROR:", repr(error))
-
-    messages.error(
-        request,
-        "An unexpected email error occurred.",
-    )
 def message_success(request):
     return render(
         request,
-        "app/message_success.html"
+        "app/message_success.html",
     )
